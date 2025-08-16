@@ -1,0 +1,17 @@
+.skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.skill {
+  background-color: #eee;
+  color: #333;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.icon {
+  width: 50px;
+}

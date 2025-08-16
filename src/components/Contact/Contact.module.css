@@ -1,0 +1,19 @@
+.contact {
+  max-width: 600px;
+  margin: 3rem auto;
+  padding: 0 2rem;
+  text-align: center;
+}
+
+.title {
+  font-family: 'Playwrite HU', serif;
+  color: var(--heading);
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.textContent {
+  flex: 1;
+  min-width: 300px;
+  color: var(--text);
+}

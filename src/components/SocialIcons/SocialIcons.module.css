@@ -1,0 +1,44 @@
+.iconsContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+.skillIcon {
+  color: var(--text);
+  padding: 0.2rem;
+}
+
+.iconLink:hover .skillIcon {
+  background-color: var(--background);
+  border-radius: 17%;
+}
+
+.Email:hover .skillIcon {
+  color: var(--email-color);
+}
+
+.LinkedIn:hover .skillIcon {
+  color: var(--linkedin-color);
+}
+
+.GitHub:hover .skillIcon {
+  color: var(--github-color);
+}
+
+.CodePen:hover .skillIcon {
+  color: var(--codepen-color);
+}
+
+.Freecodecamp:hover .skillIcon {
+  color: var(--freecodecamp-color);
+}
+
+.Codingame:hover .skillIcon {
+  color: var(--codingame-color);
+}
+
+.Hackerrank:hover .skillIcon {
+  color: var(--hackerrank-color);
+}
