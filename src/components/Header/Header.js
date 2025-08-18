@@ -63,7 +63,7 @@ export default function Header() {
         {isMobile && isMenuOpen && (
           <nav className={styles.mobileNav}>{links}</nav>
         )}
-        <SocialIcons />
+        <SocialIcons width={20} height={20} />
         <button
           aria-label='Toggle Dark Mode'
           onClick={toggleTheme}

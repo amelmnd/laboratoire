@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import AddProject from '@/components/Projects/AddProject';
+import AddProject from '@/components/ManageProjects/AddProject';
 import ReturnButton from '@/components/ReturnButton/ReturnButton';
 
 export default function AddProjectPage() {

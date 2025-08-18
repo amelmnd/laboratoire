@@ -127,3 +127,93 @@
     margin: 0 auto;
   }
 }
+
+/* Masquer l'icône clear quand il n'y a aucune skill sélectionnée */
+.filtersBar[data-has-selected="false"] .clearIconBtn {
+  display: none;
+}
+.filtersBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0 8px;
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.leftControls {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+}
+
+
+.clearIconBtn:hover {
+  transform: translateY(-1px);
+  border-color: var(--link);
+}
+
+/* Rangée de chips : wrap desktop / scroll mobile */
+.chipsScroller {
+  flex: 1 1 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+@media (max-width: 768px) {
+  .chipsScroller {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    padding-bottom: 4px;
+    gap: 10px;
+  }
+  .chipsScroller::-webkit-scrollbar { height: 6px; }
+  .chipsScroller::-webkit-scrollbar-track { background: transparent; }
+  .chipsScroller::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
+}
+
+/* Chips */
+.chip {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--button-bg);
+  color: var(--button-text);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.08s ease-in-out, background 0.2s ease, border-color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  scroll-snap-align: start;
+}
+.chip:hover { transform: translateY(1px); border-color: var(--link); }
+.chipActive { background: var(--link); color: #fff; border-color: var(--link); }
+
+.chipCount {
+  font-size: 0.75rem;
+  padding: 2px 4px;
+  background: var(--card-bg);
+  color: var(--text);
+  border-radius: 999px;
+  border: 1px solid var(--border);
+}
+
+/* ✔️ Couleurs plus contrastées + affiché seulement quand il existe (cf. JSX) */
+.clearIconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--link);   /* avant: var(--card-bg) */
+  color: var(--button-bg);      /* avant: var(--text) */
+  transition: transform 0.08s ease, border-color 0.2s ease, background 0.2s ease;
+}

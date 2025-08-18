@@ -72,8 +72,8 @@ export default function SocialIcons({ width = 32, height = 32 }) {
               <Image
                 src={CodingameIcon}
                 alt='Codingame'
-                width={32}
-                height={32}
+                width={width}
+                height={height}
               />
             ) : (
               <Icon

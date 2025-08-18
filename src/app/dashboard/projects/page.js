@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import ProjectList from '../../../components/Projects/EditableProjectList';
+import ProjectList from '../../../components/ManageProjects/EditableProjectList';
 import ReturnButton from '@/components/ReturnButton/ReturnButton';
 
 export default function ProjectsPage() {
