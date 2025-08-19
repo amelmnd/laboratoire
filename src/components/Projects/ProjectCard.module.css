@@ -80,8 +80,3 @@
   background: var(--button-text);
 }
 
-@media (max-width: 568px) {
-	.imageContainer {
-		display: none;
-	}
-}

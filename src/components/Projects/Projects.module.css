@@ -12,7 +12,8 @@
   margin-bottom: 1rem;
   text-align: center;
 }
-.subtitle{
+
+.subtitle {
   text-align: center;
   color: var(--heading);
 }
@@ -99,39 +100,25 @@
   background: var(--link-hover);
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-}
-
 @media (max-width: 768px) {
   .grid {
-    display: flex;
-    overflow-x: auto;
-    gap: 1rem;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 1rem;
+    margin: 1rem;
   }
 
-  .grid > * {
-    flex: 0 0 80%;
-    scroll-snap-align: start;
-  }
   .projects {
     padding: 0;
   }
-  .text{
+
+  .text {
     max-width: 80vw;
     margin: 0 auto;
   }
 }
 
-/* Masquer l'icône clear quand il n'y a aucune skill sélectionnée */
 .filtersBar[data-has-selected="false"] .clearIconBtn {
   display: none;
 }
+
 .filtersBar {
   display: flex;
   align-items: center;
@@ -140,20 +127,23 @@
   padding: 8px 0;
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: calc(var(--header-height, 72px) + 8px);
+  z-index: 200;
+  background: var(--bg, #fff);
 }
+
 .leftControls {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
 }
 
-
 .clearIconBtn:hover {
   transform: translateY(-1px);
   border-color: var(--link);
 }
 
-/* Rangée de chips : wrap desktop / scroll mobile */
 .chipsScroller {
   flex: 1 1 auto;
   display: flex;
@@ -161,6 +151,7 @@
   gap: 8px;
   min-width: 0;
 }
+
 @media (max-width: 768px) {
   .chipsScroller {
     flex-wrap: nowrap;
@@ -176,7 +167,6 @@
   .chipsScroller::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
 }
 
-/* Chips */
 .chip {
   appearance: none;
   border: 1px solid var(--border);
@@ -194,8 +184,17 @@
   white-space: nowrap;
   scroll-snap-align: start;
 }
-.chip:hover { transform: translateY(1px); border-color: var(--link); }
-.chipActive { background: var(--link); color: #fff; border-color: var(--link); }
+
+.chip:hover {
+  transform: translateY(1px);
+  border-color: var(--link);
+}
+
+.chipActive {
+  background: var(--link);
+  color: #fff;
+  border-color: var(--link);
+}
 
 .chipCount {
   font-size: 0.75rem;
@@ -206,14 +205,13 @@
   border: 1px solid var(--border);
 }
 
-/* ✔️ Couleurs plus contrastées + affiché seulement quand il existe (cf. JSX) */
 .clearIconBtn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border-radius: 999px;
   border: 1px solid var(--border);
-  background: var(--link);   /* avant: var(--card-bg) */
-  color: var(--button-bg);      /* avant: var(--text) */
+  background: var(--link);
+  color: var(--button-bg);
   transition: transform 0.08s ease, border-color 0.2s ease, background 0.2s ease;
 }

@@ -120,7 +120,7 @@ export default function Projects() {
       <div className={styles.text}>
         <h2 className={styles.title}>Bienvenue dans mon Laboratoire</h2>
         <p className={styles.subtitle}>
-          Ici sont présenter tous mes projets, d'hier et d'aujourd'hui. Les test, les expériences tous mes projets finis et présentable.
+          Ici sont présentés tous mes projets, d'hier et d'aujourd'hui. Les tests, les expériences, tous mes projets finis et présentables.
         </p>
       </div>
 
@@ -192,8 +192,6 @@ export default function Projects() {
         <p>Chargement des projets...</p>
       ) : visibleProjects.length === 0 ? (
         <p>Aucun projet trouvé.</p>
-      ) : isMobile ? (
-        <Carousel items={visibleProjects} renderItem={renderCard} />
       ) : (
         <div className={styles.grid}>
           {visibleProjects.map((project) => renderCard(project))}

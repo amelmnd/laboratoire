@@ -4,8 +4,8 @@ import Header from '../components/Header/Header'
 import '../styles/globals.css'
 
 export const metadata = {
-  title: 'Amel M - Portfolio',
-  description: 'Portfolio personnel en Next.js',
+  title: 'Amel M - Laboratoire',
+  description: "Mon laboratoire de test et d'expérimentation",
 }
 
 export default function RootLayout({ children }) {
@@ -18,7 +18,6 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <Header />
-
         <AuthProvider>
           {children}
         </AuthProvider>

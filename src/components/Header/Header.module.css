@@ -46,19 +46,7 @@
 
 .toggleButton:hover {
   color: var(--link-hover);
-}
-
-.hamburger {
-  font-size: 1.8rem;
   background: transparent;
-  border: none;
-  cursor: pointer;
-  color: var(--link);
-  margin-left: 1rem;
-}
-
-.hamburger:hover {
-  color: var(--link-hover);
 }
 
 .actions {
@@ -66,21 +54,6 @@
   align-items: center;
 }
 
-.mobileNav {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: 0;
-  background-color: var(--background);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 1rem 2rem;
-  gap: 1rem;
-  border-top: 1px solid var(--border);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-  z-index: 99;
-}
 
 @media (max-width: 768px) {
   .nav {

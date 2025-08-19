@@ -19,20 +19,6 @@ export default function Header() {
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
   const closeMenu = () => setIsMenuOpen(false);
 
-  const links = (
-    <>
-      <Link href='/' className={styles.link} onClick={closeMenu}>
-        Accueil
-      </Link>
-      <Link href='/#projects' className={styles.link} onClick={closeMenu}>
-        Projets
-      </Link>
-      <Link href='/#contact' className={styles.link} onClick={closeMenu}>
-        Contact
-      </Link>
-    </>
-  );
-
   return (
     <header className={styles.header}>
       <div>
@@ -48,21 +34,7 @@ export default function Header() {
           />
         </Link>
       </div>
-      {!isMobile && <nav className={styles.nav}>{links}</nav>}
-
       <div className={styles.actions}>
-        {isMobile && (
-          <button
-            className={styles.hamburger}
-            onClick={toggleMenu}
-            aria-label='Menu'
-          >
-            {isMenuOpen ? '✖' : '☰'}
-          </button>
-        )}
-        {isMobile && isMenuOpen && (
-          <nav className={styles.mobileNav}>{links}</nav>
-        )}
         <SocialIcons width={20} height={20} />
         <button
           aria-label='Toggle Dark Mode'
