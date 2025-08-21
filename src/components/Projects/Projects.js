@@ -1,21 +1,25 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import Link from 'next/link';
 import ProjectCard from './ProjectCard';
 import Carousel from '../Carousel/Carousel';
 import styles from './Projects.module.css';
 import { supabase } from '../../lib/supabaseClient';
 import useMediaQuery from '../../hook/useMediaQuery';
 import { Icon } from '@iconify/react';
+import Loader from '@/components/Loader/Loader';
+import { useAuth } from '@/context/AuthProvider';
 
 export default function Projects() {
+  const { user } = useAuth(); // si tu veux refetch quand l’auth change
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedSkills, setSelectedSkills] = useState([]); // multi-sélection AND
+  const [selectedSkills, setSelectedSkills] = useState([]);
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   useEffect(() => {
+    let cancelled = false;
+
     const fetchProjects = async () => {
       setLoading(true);
       try {
@@ -30,29 +34,33 @@ export default function Projects() {
           .order('date', { ascending: false });
 
         if (error) throw error;
-        setProjects(allProjects || []);
+        if (!cancelled) setProjects(allProjects || []);
       } catch (error) {
-        alert('Erreur lors du chargement des projets : ' + error.message);
+        if (!cancelled) {
+          console.error('Erreur lors du chargement des projets :', error);
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     fetchProjects();
-  }, []);
 
-  // Helper : set des skills d'un projet
+    return () => {
+      cancelled = true;
+    };
+    // si tu ne veux PAS refetch sur changement d’utilisateur, enlève `user` des deps
+  }, [user]);
+
   const projectSkillSet = (p) =>
     new Set((p.project_skills || []).map(ps => ps?.skills?.name).filter(Boolean));
 
-  // Tous les skills (dédupliqués) + tri alpha
   const allSkills = useMemo(() => {
     const s = new Set();
     for (const p of projects) for (const n of projectSkillSet(p)) s.add(n);
     return [...s].sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
   }, [projects]);
 
-  // AND match
   const matchesAll = (p, arr) => {
     const ps = projectSkillSet(p);
     return arr.every(s => ps.has(s));
@@ -129,10 +137,9 @@ export default function Projects() {
         className={styles.filtersBar}
         role="toolbar"
         aria-label="Filtrer par compétences"
-        data-has-selected={selectedSkills.length > 0 ? 'true' : 'false'}  // ← AJOUT
+        data-has-selected={selectedSkills.length > 0 ? 'true' : 'false'}
       >
         <div className={styles.leftControls}>
-          {/* ➜ On n'affiche le bouton clear QUE s'il y a une sélection */}
           {selectedSkills.length > 0 && (
             <button
               type="button"
@@ -188,8 +195,9 @@ export default function Projects() {
         </div>
       </div>
 
+      {/* 👇 ICI : même Loader global que pour l’auth */}
       {loading ? (
-        <p>Chargement des projets...</p>
+        <Loader />
       ) : visibleProjects.length === 0 ? (
         <p>Aucun projet trouvé.</p>
       ) : (

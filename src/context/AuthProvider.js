@@ -1,65 +1,58 @@
-'use client'
+"use client";
 
-import { createContext, useContext, useEffect, useState } from 'react'
-import { supabase } from '../lib/supabaseClient'
-import { useRouter } from 'next/navigation'
+import { createContext, useContext, useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
+import Loader from "@/components/Loader/Loader"
 
-const AuthContext = createContext()
-
-const ALLOWED_EMAIL = process.env.NEXT_PUBLIC_ALLOWED_EMAIL || 'amelmnd.dev@gmail.com'
+const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(undefined)
-  const [accessChecked, setAccessChecked] = useState(false) // <- évite boucle
-  const router = useRouter()
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-    })
+    const init = async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
 
+        setUser(user);
+
+        // Exemple : charger d’autres données globales si besoin
+        // const { data: settings } = await supabase.from("settings").select("*").single();
+        // console.log("Settings:", settings);
+
+      } catch (err) {
+        console.error("Erreur AuthProvider:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    init();
+
+    // Optionnel : écouter les changements d’auth (login/logout)
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-    })
+      setUser(session?.user ?? null);
+    });
 
     return () => {
-      listener.subscription.unsubscribe()
-    }
-  }, [])
+      listener?.subscription.unsubscribe();
+    };
+  }, []);
 
-  useEffect(() => {
-    if (user && !accessChecked) {
-      if (user.email.trim().toLowerCase() !== ALLOWED_EMAIL.trim().toLowerCase()) {
-        alert("Accès refusé : adresse email non autorisée")
-        signOut()
-        router.push('/')
-      }
-      setAccessChecked(true)
-    }
-    if (user === null) {
-      setAccessChecked(true)
-    }
-  }, [user, accessChecked, router])
-
-  const signInWithOAuth = async (provider) => {
-    await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: window.location.origin + '/dashboard',
-      },
-    })
-  }
-
-  const signOut = async () => {
-    await supabase.auth.signOut()
-    setUser(null)
+  if (loading) {
+    return <Loader />; // ⬅️ affiche ton écran global de chargement
   }
 
   return (
-    <AuthContext.Provider value={{ user, signInWithOAuth, signOut }}>
+    <AuthContext.Provider value={{ user }}>
       {children}
     </AuthContext.Provider>
-  )
+  );
 }
 
-export const useAuth = () => useContext(AuthContext)
+export function useAuth() {
+  return useContext(AuthContext);
+}
