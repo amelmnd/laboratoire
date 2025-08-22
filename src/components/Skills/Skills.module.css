@@ -80,21 +80,21 @@
   background: var(--card-bg);
   border-radius: 1rem;
   padding: 1rem;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.08); 
+  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
 }
 
 .skillItem {
   display: flex;
   align-items: center;
-  gap: 0.5rem; /* réduire l'espacement */
+  gap: 0.5rem;
   padding: 0.3rem 0;
 }
 
 .skillIcon {
-  width: 28px; /* réduire un peu pour que ça rentre */
+  width: 28px;
   height: 28px;
   object-fit: contain;
-  flex-shrink: 0; /* éviter que l'image rétrécisse */
+  flex-shrink: 0;
 }
 
 @media (max-width: 768px) {

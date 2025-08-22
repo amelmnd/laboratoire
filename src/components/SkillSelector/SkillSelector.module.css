@@ -144,7 +144,6 @@
   background-color: #1e40af;
 }
 
-/* Suggestions dropdown */
 .skillInputContainer {
   display: flex;
   gap: 0.5rem;
@@ -188,7 +187,6 @@
   transform: scale(1.05);
 }
 
-/* Suggestions dropdown */
 .suggestions {
   background-color: #fff;
   border: 1px solid #ccc;

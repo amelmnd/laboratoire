@@ -131,7 +131,6 @@ export default function Projects() {
         </p>
       </div>
 
-      {/* BARRE FILTRES */}
       <div
         className={styles.filtersBar}
         role="toolbar"
@@ -194,7 +193,6 @@ export default function Projects() {
         </div>
       </div>
 
-      {/* 👇 ICI : même Loader global que pour l’auth */}
       {loading ? (
         <Loader />
       ) : visibleProjects.length === 0 ? (

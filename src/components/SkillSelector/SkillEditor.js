@@ -88,7 +88,6 @@ export default function SkillEditor({ selected = [], onChange }) {
 
   return (
     <div className={styles.skillEditor}>
-      {/* 🔹 Input d'ajout avec auto-complétion */}
       <div className={styles.skillInputContainer}>
         <input
           type="text"
@@ -108,7 +107,6 @@ export default function SkillEditor({ selected = [], onChange }) {
       </div>
 
 
-      {/* 🔹 Liste des suggestions */}
       {inputValue && filteredSuggestions.length > 0 && (
         <div className={styles.suggestions}>
           {filteredSuggestions.map((skill) => (
@@ -126,7 +124,6 @@ export default function SkillEditor({ selected = [], onChange }) {
       )}
 
 
-      {/* 🔹 Boutons de sélection */}
       <div className={styles.skillButtons}>
         {allSkills.map((skill) => (
           <button

@@ -93,7 +93,6 @@ export default function SkillsGrid() {
                   ))}
                 </select>
 
-                {/* ✅ PREVIEW IMAGE */}
                 <div className={styles.previewWrapper}>
                   {editing.file ? (
                     <img
