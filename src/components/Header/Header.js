@@ -5,6 +5,7 @@ import Link from 'next/link';
 import useMediaQuery from '../../hook/useMediaQuery';
 import Image from 'next/image';
 import SocialIcons from '../SocialIcons/SocialIcons';
+import { Icon } from '@iconify/react';
 
 export default function Header() {
   const [isDark, setIsDark] = useState(false);

@@ -15,6 +15,8 @@
   --freecodecamp-color: #2F5C04;
   --codingame-color: #F2BB13;
   --hackerrank-color: #02E963;
+  --portfolio-color: #825a40;
+
 }
 
 body.dark {
@@ -33,5 +35,5 @@ body.dark {
   --codepen-color: #c1c1c3;
   --freecodecamp-color: #83a860;
   --codingame-color: #FFD966;
-  --hackerrank-color: #27ff8a;
+  --portfolio-color: #fac7a5;
 }

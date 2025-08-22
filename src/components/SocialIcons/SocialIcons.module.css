@@ -2,7 +2,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 .skillIcon {
@@ -41,4 +41,8 @@
 
 .Hackerrank:hover .skillIcon {
   color: var(--hackerrank-color);
+}
+
+.Portfolio:hover .skillIcon {
+  color: var(--portfolio-color);
 }

@@ -1,12 +1,22 @@
+// components/SocialIcons.js
 'use client'
+
 import Link from 'next/link'
 import styles from './SocialIcons.module.css'
 import { Icon } from '@iconify/react'
 import CodingameIcon from '../../assets/codingameIcon.png';
 import Image from 'next/image';
+import Tooltip from '../Tooltip/Tooltip';
 
 export default function SocialIcons({ width = 32, height = 32 }) {
-	const socialLinks = [
+  const socialLinks = [
+    {
+      title: 'Portfolio',
+      icon: 'streamline-ultimate:browser-com',
+      href: 'https://amelmennad.netlify.app/',
+      isCustom: false,
+      active: true,
+    },
     {
       title: 'Email',
       icon: 'wpf:message',
@@ -56,34 +66,36 @@ export default function SocialIcons({ width = 32, height = 32 }) {
       active: false,
     },
   ];
-	return (
+
+  return (
     <div className={styles.iconsContainer}>
       {socialLinks
         .filter((item) => item.active)
         .map(({ title, icon, href, isCustom }) => (
-          <Link
-            key={title}
-            href={href}
-            target='_blank'
-            rel='nofollow noreferrer noopener'
-            className={`${styles.iconLink} ${styles[title]}`}
-          >
-            {isCustom ? (
-              <Image
-                src={CodingameIcon}
-                alt='Codingame'
-                width={width}
-                height={height}
-              />
-            ) : (
-              <Icon
-                icon={icon}
-                width={width}
-                height={height}
-                className={styles.skillIcon}
-              />
-            )}
-          </Link>
+          <Tooltip key={title} message={title}>
+            <Link
+              href={href}
+              target='_blank'
+              rel='nofollow noreferrer noopener'
+              className={`${styles.iconLink} ${styles[title]}`}
+            >
+              {isCustom ? (
+                <Image
+                  src={CodingameIcon}
+                  alt={title}
+                  width={width}
+                  height={height}
+                />
+              ) : (
+                <Icon
+                  icon={icon}
+                  width={width}
+                  height={height}
+                  className={styles.skillIcon}
+                />
+              )}
+            </Link>
+          </Tooltip>
         ))}
     </div>
   );
