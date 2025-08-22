@@ -1,4 +1,3 @@
-// components/Projects/ProjectCard.jsx
 'use client';
 
 import Link from 'next/link';
@@ -9,7 +8,7 @@ export default function ProjectCard({
   title,
   description,
   imgSrc,
-  skills = [], // [{ name, link }]
+  skills = [],
   repourl,
   demourl,
 }) {

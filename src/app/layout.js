@@ -4,7 +4,7 @@ import Header from '../components/Header/Header'
 import '../styles/globals.css'
 
 export const metadata = {
-  title: 'Amel M - Laboratoire',
+  title: 'Amel M - Labo',
   description: "Mon laboratoire de test et d'expérimentation",
 }
 

@@ -11,7 +11,7 @@ import Loader from '@/components/Loader/Loader';
 import { useAuth } from '@/context/AuthProvider';
 
 export default function Projects() {
-  const { user } = useAuth(); // si tu veux refetch quand l’auth change
+  const { user } = useAuth();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedSkills, setSelectedSkills] = useState([]);
@@ -49,7 +49,6 @@ export default function Projects() {
     return () => {
       cancelled = true;
     };
-    // si tu ne veux PAS refetch sur changement d’utilisateur, enlève `user` des deps
   }, [user]);
 
   const projectSkillSet = (p) =>

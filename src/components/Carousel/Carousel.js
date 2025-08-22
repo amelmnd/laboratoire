@@ -7,7 +7,7 @@ export default function Carousel({
   interval = 6000,
   renderItem,
   classNames = {},
-  loop = false, // ⬅ ajout : pour activer/désactiver le mode boucle
+  loop = false,
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 

@@ -22,7 +22,6 @@ export default function Skills({ usage }) {
         return;
       }
 
-      // Filtrer uniquement les skills avec un type défini
       const filteredSkills = data.filter(skill => skill.type && skill.type.trim() !== "");
 
       setSkills(filteredSkills);
@@ -34,7 +33,6 @@ export default function Skills({ usage }) {
 
   if (loading) return <p>Chargement...</p>;
 
-  // Regrouper par type
   const skillsByType = {};
   skills.forEach((skill) => {
     if (!skillsByType[skill.type]) skillsByType[skill.type] = [];

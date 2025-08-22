@@ -1,4 +1,3 @@
-// components/SkillTags.jsx
 import styles from './SkillTags.module.css';
 
 export default function SkillTags({ skills = [] }) {

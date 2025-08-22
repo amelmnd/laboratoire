@@ -19,10 +19,6 @@ export function AuthProvider({ children }) {
 
         setUser(user);
 
-        // Exemple : charger d’autres données globales si besoin
-        // const { data: settings } = await supabase.from("settings").select("*").single();
-        // console.log("Settings:", settings);
-
       } catch (err) {
         console.error("Erreur AuthProvider:", err);
       } finally {
@@ -32,7 +28,6 @@ export function AuthProvider({ children }) {
 
     init();
 
-    // Optionnel : écouter les changements d’auth (login/logout)
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
@@ -43,7 +38,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   if (loading) {
-    return <Loader />; // ⬅️ affiche ton écran global de chargement
+    return <Loader />;
   }
 
   return (

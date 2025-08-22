@@ -3,7 +3,6 @@ import React from 'react';
 import styles from './Loader.module.css';
 
 function Paw({ style }) {
-  // SVG inline => pas d'attente de police
   return (
     <svg
       viewBox="0 0 64 64"

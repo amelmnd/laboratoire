@@ -8,7 +8,7 @@ export default function AddProjectPage() {
   const router = useRouter();
 
   const handleProjectAdded = () => {
-    router.push('/dashboard/projects'); // Retour à la liste après ajout
+    router.push('/dashboard/projects');
   };
 
   return (

@@ -1,4 +1,3 @@
-// pages/api/cloudinary.js
 
 export default async function handler(req, res) {
   const { folder } = req.query;
