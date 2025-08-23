@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import Loader from "@/components/Loader/Loader"
+import Loader from "@/components/Loader/Loader";
 
 const AuthContext = createContext(null);
 
@@ -16,9 +16,7 @@ export function AuthProvider({ children }) {
         const {
           data: { user },
         } = await supabase.auth.getUser();
-
         setUser(user);
-
       } catch (err) {
         console.error("Erreur AuthProvider:", err);
       } finally {
@@ -28,21 +26,43 @@ export function AuthProvider({ children }) {
 
     init();
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
 
     return () => {
       listener?.subscription.unsubscribe();
     };
   }, []);
 
+  const signInWithOAuth = async (provider) => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`, // <-- change /dashboard par ta page
+      },
+    });
+    if (error) console.error("Erreur OAuth:", error.message);
+  };
+
+
+  const signOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Erreur déconnexion:", error.message);
+    } else {
+      window.location.href = "/"; // redirige vers la home
+    }
+  };
+
   if (loading) {
     return <Loader />;
   }
 
   return (
-    <AuthContext.Provider value={{ user }}>
+    <AuthContext.Provider value={{ user, signInWithOAuth, signOut }}>
       {children}
     </AuthContext.Provider>
   );
