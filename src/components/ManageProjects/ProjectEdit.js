@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabaseClient';
 import styles from './ProjectEdit.module.css';
 import SkillSelector from '../SkillSelector/SkillSelector';
 import SkillEditor from '../SkillSelector/SkillEditor';
@@ -15,6 +17,20 @@ export default function ProjectEdit({
   saving,
   preview,
 }) {
+  const [educations, setEducations] = useState([]);
+
+  useEffect(() => {
+    const fetchEducation = async () => {
+      const { data, error } = await supabase.from('education').select('id, institution');
+      if (error) {
+        console.error('Erreur récupération éducation :', error.message);
+      } else {
+        setEducations(data);
+      }
+    };
+    fetchEducation();
+  }, []);
+
   return (
     <div className={styles.card}>
       <label className={styles.label}>
@@ -34,6 +50,23 @@ export default function ProjectEdit({
           value={project.description || ''}
           onChange={(e) => onChange(project.id, 'description', e.target.value)}
         />
+      </label>
+
+      <label className={styles.label}>
+        Éducation :
+        <select
+          className={styles.input}
+          value={project.education_id || ''}
+          onChange={(e) => onChange(project.id, 'education_id', e.target.value)}
+        >
+          <option value="">-- Sélectionner --</option>
+            <option> Projet perso</option>
+          {educations.map((edu) => (
+            <option key={edu.id} value={edu.id}>
+              {edu.institution}
+            </option>
+          ))}
+        </select>
       </label>
 
       <label className={styles.label}>
@@ -80,7 +113,8 @@ export default function ProjectEdit({
         Compétences :
         <SkillEditor selected={skills} onChange={onSkillChange} />
       </label>
- <label className={styles.label}>
+
+      <label className={styles.label}>
         Image :
         {preview ? (
           <img src={preview} className={styles.image} alt="Preview" />

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import styles from './AddProject.module.css';
 import SkillSelector from '../SkillSelector/SkillSelector';
@@ -17,6 +17,22 @@ export default function AddProject({ onAdded, onBack }) {
   const [fav, setFav] = useState(false);
   const [skills, setSkills] = useState([]);
   const [saving, setSaving] = useState(false);
+  const [educations, setEducations] = useState([]);
+  const [selectedEducation, setSelectedEducation] = useState('');
+
+  // Récupérer toutes les éducation au montage
+  useEffect(() => {
+    const fetchEducation = async () => {
+      const { data, error } = await supabase.from('education').select('id, institution');
+      if (error) {
+        console.error('Erreur récupération éducation :', error.message);
+      } else {
+        setEducations(data);
+        if (data.length > 0) setSelectedEducation(data[0].id);
+      }
+    };
+    fetchEducation();
+  }, []);
 
   const uploadImage = async (file) => {
     if (!file) return '';
@@ -34,14 +50,9 @@ export default function AddProject({ onAdded, onBack }) {
     );
     const data = await res.json();
 
-    if (data.secure_url) {
-      return data.secure_url;
-    } else {
-      alert(
-        'Échec upload image : ' + (data.error?.message || JSON.stringify(data))
-      );
-      return '';
-    }
+    if (data.secure_url) return data.secure_url;
+    alert('Échec upload image : ' + (data.error?.message || JSON.stringify(data)));
+    return '';
   };
 
   const handleSubmit = async (e) => {
@@ -68,6 +79,7 @@ export default function AddProject({ onAdded, onBack }) {
           demourl,
           date,
           fav,
+          education_id: selectedEducation, // Ajouter la relation
         },
       ])
       .select()
@@ -113,6 +125,21 @@ export default function AddProject({ onAdded, onBack }) {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
+      </label>
+
+      <label className={styles.label}>
+        Éducation :
+        <select
+          className={styles.input}
+          value={selectedEducation}
+          onChange={(e) => setSelectedEducation(e.target.value)}
+        >
+          {educations.map((edu) => (
+            <option key={edu.id} value={edu.id}>
+              {edu.institution}
+            </option>
+          ))}
+        </select>
       </label>
 
       <label className={styles.label}>

@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import styles from './EditableProjectList.module.css';
-import SkillSelector from '../SkillSelector/SkillSelector';
 import ProjectView from './ProjectView';
 import ProjectEdit from './ProjectEdit';
 
@@ -15,39 +14,33 @@ export default function EditableProjectList() {
   const [previews, setPreviews] = useState({});
   const [projectSkills, setProjectSkills] = useState({});
 
+  // Fetch projets avec éducation et skills
   const fetchProjects = async () => {
     setLoading(true);
 
-    const { data: projectsData, error: projectError } = await supabase
+    const { data, error } = await supabase
       .from('projects')
-      .select('*')
+      .select(`
+        *,
+        education(id, institution),
+        project_skills(skill_id, skills(name))
+      `)
       .order('date', { ascending: false });
 
-    if (projectError) {
-      alert('Erreur : ' + projectError.message);
+    if (error) {
+      alert('Erreur fetch projets : ' + error.message);
       setLoading(false);
       return;
     }
 
-    const { data: links, error: skillsError } = await supabase
-      .from('project_skills')
-      .select('project_id, skills ( id, name )');
-
-    if (skillsError) {
-      alert('Erreur chargement skills : ' + skillsError.message);
-      setLoading(false);
-      return;
-    }
-
+    // Transforme les skills pour chaque projet
     const skillMap = {};
-    links?.forEach((link) => {
-      const skill = link.skills;
-      if (!skillMap[link.project_id]) skillMap[link.project_id] = [];
-      skillMap[link.project_id].push(skill);
+    data.forEach((p) => {
+      skillMap[p.id] = p.project_skills?.map((ps) => ps.skills) || [];
     });
 
     setProjectSkills(skillMap);
-    setProjects(projectsData || []);
+    setProjects(data || []);
     setLoading(false);
   };
 
@@ -55,6 +48,7 @@ export default function EditableProjectList() {
     fetchProjects();
   }, []);
 
+  // Gérer changement des inputs
   const handleInputChange = (id, field, value) => {
     setProjects((prev) =>
       prev.map((p) => (p.id === id ? { ...p, [field]: value } : p))
@@ -68,6 +62,7 @@ export default function EditableProjectList() {
     }));
   };
 
+  // Gestion upload image
   const handleImageChange = async (id, file) => {
     if (!file) return;
 
@@ -105,12 +100,22 @@ export default function EditableProjectList() {
     }
   };
 
+  // Sauvegarde projet
   const handleSave = async (project) => {
     setSaving(true);
 
     const { error } = await supabase
       .from('projects')
-      .update(project)
+      .update({
+        title: project.title,
+        description: project.description,
+        imglink: project.imglink,
+        repourl: project.repourl,
+        demourl: project.demourl,
+        date: project.date,
+        fav: project.fav,
+        education_id: project.education_id,
+      })
       .eq('id', project.id);
 
     if (error) {
@@ -119,8 +124,8 @@ export default function EditableProjectList() {
       return;
     }
 
+    // Mettre à jour compétences
     await supabase.from('project_skills').delete().eq('project_id', project.id);
-
     const currentSkills = projectSkills[project.id] || [];
     for (const skill of currentSkills) {
       await supabase.from('project_skills').insert({
@@ -144,32 +149,48 @@ export default function EditableProjectList() {
 
   if (loading) return <p>Chargement...</p>;
 
+  // Grouper par éducation
+  const grouped = {};
+  projects.forEach((project) => {
+    const eduName = project.education?.institution || 'Sans formation';
+    if (!grouped[eduName]) grouped[eduName] = [];
+    grouped[eduName].push(project);
+  });
+
   return (
-    <div className={styles.grid}>
-      {projects.map((project) =>
-        editingId === project.id ? (
-          <ProjectEdit
-            key={project.id}
-            project={project}
-            skills={projectSkills[project.id] || []}
-            onChange={handleInputChange}
-            onSkillChange={(skills) => handleSkillChange(project.id, skills)}
-            onImageChange={handleImageChange}
-            onSave={() => handleSave(project)}
-            onCancel={() => setEditingId(null)}
-            saving={saving}
-            preview={previews[project.id]}
-          />
-        ) : (
-          <ProjectView
-            key={project.id}
-            project={project}
-            skills={projectSkills[project.id] || []}
-            onEdit={() => setEditingId(project.id)}
-            onDelete={() => handleDelete(project.id)}
-          />
-        )
-      )}
+    <div>
+      {Object.entries(grouped).map(([eduName, eduProjects]) => (
+        <div key={eduName}>
+          <h2>{eduName}</h2>
+          <div className={styles.grid}>
+            {eduProjects.map((project) =>
+              editingId === project.id ? (
+                <ProjectEdit
+                  key={project.id}
+                  project={project}
+                  skills={projectSkills[project.id] || []}
+                  onChange={handleInputChange}
+                  onSkillChange={(skills) => handleSkillChange(project.id, skills)}
+                  onImageChange={handleImageChange}
+                  onSave={() => handleSave(project)}
+                  onCancel={() => setEditingId(null)}
+                  saving={saving}
+                  preview={previews[project.id]}
+                />
+              ) : (
+                <ProjectView
+                  key={project.id}
+                  project={project}
+                  skills={projectSkills[project.id] || []}
+                  education={project.education}
+                  onEdit={() => setEditingId(project.id)}
+                  onDelete={() => handleDelete(project.id)}
+                />
+              )
+            )}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
