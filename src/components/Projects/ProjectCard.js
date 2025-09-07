@@ -11,6 +11,7 @@ export default function ProjectCard({
   skills = [],
   repourl,
   demourl,
+  education, // 🔹 ajouté
 }) {
   return (
     <div className={styles.card}>
@@ -24,6 +25,14 @@ export default function ProjectCard({
 
       <div className={styles.content}>
         <h3 className={styles.title}>{title}</h3>
+
+        {/* 🔹 Formation affichée ici */}
+        {education && (
+          <p className={styles.education}>
+            <span className={styles.educationBadge}>{education}</span>
+          </p>
+        )}
+
         <p className={styles.description}>{description}</p>
 
         <SkillTags skills={skills} />
@@ -31,12 +40,22 @@ export default function ProjectCard({
         {(repourl || demourl) && (
           <div className={styles.links}>
             {repourl && (
-              <Link href={repourl} target="_blank" rel="noreferrer" className={styles.button}>
+              <Link
+                href={repourl}
+                target="_blank"
+                rel="noreferrer"
+                className={styles.button}
+              >
                 Code
               </Link>
             )}
             {demourl && (
-              <Link href={demourl} target="_blank" rel="noreferrer" className={styles.button}>
+              <Link
+                href={demourl}
+                target="_blank"
+                rel="noreferrer"
+                className={styles.button}
+              >
                 Demo
               </Link>
             )}

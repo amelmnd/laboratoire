@@ -2,11 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import ProjectCard from './ProjectCard';
-import Carousel from '../Carousel/Carousel';
 import styles from './Projects.module.css';
 import { supabase } from '../../lib/supabaseClient';
-import useMediaQuery from '../../hook/useMediaQuery';
-import { Icon } from '@iconify/react';
 import Loader from '@/components/Loader/Loader';
 import { useAuth } from '@/context/AuthProvider';
 
@@ -14,98 +11,105 @@ export default function Projects() {
   const { user } = useAuth();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedSkills, setSelectedSkills] = useState([]);
-  const isMobile = useMediaQuery('(max-width: 768px)');
 
+  const [selectedSkills, setSelectedSkills] = useState([]);
+  const [selectedEducation, setSelectedEducation] = useState(null);
+
+  // 🔹 Formate l'affichage de l'éducation
+  const getEducationLabel = (edu) => {
+    if (!edu) return null;
+    if (edu.institution) return edu.institution;
+    if (edu.studytype && edu.area) return `${edu.studytype} en ${edu.area}`;
+    if (edu.area) return edu.area;
+    return 'Formation';
+  };
+
+  // 🔹 Fetch projets Supabase
   useEffect(() => {
     let cancelled = false;
 
     const fetchProjects = async () => {
       setLoading(true);
       try {
-        const { data: allProjects, error } = await supabase
+        const { data, error } = await supabase
           .from('projects')
           .select(`
             *,
+            education:education_id (id, institution, area, studytype),
             project_skills:project_skills!project_skills_project_id_fkey (
-              skills:skills!project_skills_skill_id_fkey ( name, link )
+              skills:skills!project_skills_skill_id_fkey (name, link)
             )
           `)
-          .order('date', { ascending: false });
+          .order('date', { ascending: false, nullsFirst: false });
 
         if (error) throw error;
-        if (!cancelled) setProjects(allProjects || []);
+        if (!cancelled) setProjects(data || []);
       } catch (error) {
-        if (!cancelled) {
-          console.error('Erreur lors du chargement des projets :', error);
-        }
+        if (!cancelled) console.error(error);
       } finally {
         if (!cancelled) setLoading(false);
       }
     };
 
     fetchProjects();
-
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [user]);
 
+  // 🔹 Gestion des compétences
   const projectSkillSet = (p) =>
-    new Set((p.project_skills || []).map(ps => ps?.skills?.name).filter(Boolean));
+    new Set((p.project_skills || []).map(ps => ps.skills?.name).filter(Boolean));
 
-  const allSkills = useMemo(() => {
-    const s = new Set();
-    for (const p of projects) for (const n of projectSkillSet(p)) s.add(n);
-    return [...s].sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
+  const matchesAll = (p, arr) => arr.every(s => projectSkillSet(p).has(s));
+
+  // 🔹 Extraire toutes les formations
+  const allEducations = useMemo(() => {
+    const set = new Set();
+    projects.forEach(p => {
+      const label = getEducationLabel(p.education);
+      if (label) set.add(label);
+    });
+    return [...set].sort((a,b) => a.localeCompare(b,'fr',{sensitivity:'base'}));
   }, [projects]);
 
-  const matchesAll = (p, arr) => {
-    const ps = projectSkillSet(p);
-    return arr.every(s => ps.has(s));
-  };
-
+  // 🔹 Filtrer projets visibles selon education et skills
   const visibleProjects = useMemo(() => {
-    if (selectedSkills.length === 0) return projects;
-    return projects.filter(p => matchesAll(p, selectedSkills));
-  }, [projects, selectedSkills]);
+    let filtered = projects;
 
-  const baseCounts = useMemo(() => {
-    const map = new Map();
-    for (const name of allSkills) map.set(name, 0);
-    for (const p of projects) for (const name of projectSkillSet(p)) {
-      map.set(name, (map.get(name) || 0) + 1);
-    }
-    return map;
-  }, [projects, allSkills]);
-
-  const { chipsSelected, chipsAvailable } = useMemo(() => {
-    if (selectedSkills.length === 0) {
-      const avail = allSkills.map(name => ({ name, count: baseCounts.get(name) || 0 }));
-      return { chipsSelected: [], chipsAvailable: avail };
+    if (selectedEducation) {
+      filtered = filtered.filter(p => getEducationLabel(p.education) === selectedEducation);
     }
 
-    const selected = selectedSkills.map(name => ({ name, count: visibleProjects.length }));
-    const avail = [];
-    const selectedSet = new Set(selectedSkills);
-
-    for (const name of allSkills) {
-      if (selectedSet.has(name)) continue;
-      const nextSel = [...selectedSkills, name];
-      const nextCount = projects.reduce((acc, p) => acc + (matchesAll(p, nextSel) ? 1 : 0), 0);
-      if (nextCount > 0) avail.push({ name, count: nextCount });
+    if (selectedSkills.length > 0) {
+      filtered = filtered.filter(p => matchesAll(p, selectedSkills));
     }
 
-    selected.sort((a, b) => a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' }));
-    avail.sort((a, b) => a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' }));
-    return { chipsSelected: selected, chipsAvailable: avail };
-  }, [allSkills, baseCounts, projects, selectedSkills, visibleProjects]);
+    return filtered;
+  }, [projects, selectedEducation, selectedSkills]);
 
-  const toggleSkill = (name) => {
-    setSelectedSkills(prev => prev.includes(name) ? prev.filter(s => s !== name) : [...prev, name]);
+  // 🔹 Compétences disponibles dynamiquement selon l'éducation sélectionnée
+  const availableSkills = useMemo(() => {
+    const skillsSet = new Set();
+    visibleProjects.forEach(p => projectSkillSet(p).forEach(s => skillsSet.add(s)));
+    return [...skillsSet].sort((a,b) => a.localeCompare(b,'fr',{sensitivity:'base'}));
+  }, [visibleProjects]);
+
+  // 🔹 Gestion des filtres
+  const toggleSkill = (name) => setSelectedSkills(prev =>
+    prev.includes(name) ? prev.filter(s => s !== name) : [...prev, name]
+  );
+
+  const handleEducationChange = (e) => {
+    const value = e.target.value || null;
+    setSelectedEducation(value);
+    setSelectedSkills([]); // 🔹 Reset skills quand une éducation est choisie
   };
-  const clearAll = () => setSelectedSkills([]);
 
+  const clearAll = () => {
+    setSelectedSkills([]);
+    setSelectedEducation(null);
+  };
+
+  // 🔹 Rendu carte projet
   const renderCard = (project) => (
     <ProjectCard
       key={project.id}
@@ -113,12 +117,13 @@ export default function Projects() {
       description={project.description}
       imgSrc={project.imglink}
       skills={(project.project_skills || []).map(ps => ({
-        name: ps?.skills?.name || '',
-        link: ps?.skills?.link || '',
+        name: ps.skills?.name || '',
+        link: ps.skills?.link || '',
       }))}
       repourl={project.repourl}
       demourl={project.demourl}
-      onSkillClick={(name) => toggleSkill(name)}
+      education={getEducationLabel(project.education)}
+      onSkillClick={toggleSkill}
     />
   );
 
@@ -127,81 +132,57 @@ export default function Projects() {
       <div className={styles.text}>
         <h2 className={styles.title}>Bienvenue dans mon Laboratoire</h2>
         <p className={styles.subtitle}>
-          Ici sont présentés tous mes projets, d'hier et d'aujourd'hui. Les tests, les expériences, tous mes projets finis et présentables.
+          Ici sont présentés tous mes projets, d'hier et d'aujourd'hui.
         </p>
       </div>
 
-      <div
-        className={styles.filtersBar}
-        role="toolbar"
-        aria-label="Filtrer par compétences"
-        data-has-selected={selectedSkills.length > 0 ? 'true' : 'false'}
-      >
+      {/* 🔹 Filtres */}
+      <div className={styles.filtersBar}>
         <div className={styles.leftControls}>
-          {selectedSkills.length > 0 && (
+          {(selectedSkills.length > 0 || selectedEducation) && (
             <button
               type="button"
               className={styles.clearIconBtn}
               onClick={clearAll}
-              aria-label="Effacer tous les filtres"
-              title="Effacer les filtres"
+              title="Effacer tous les filtres"
             >
-              <Icon icon="uis:multiply" width="15" height="15" />
+              ✕
             </button>
           )}
         </div>
 
+        {/* 🔹 Chips compétences dynamiques */}
         <div className={styles.chipsScroller}>
-          <button
-            type="button"
-            className={`${styles.chip} ${selectedSkills.length === 0 ? styles.chipActive : ''}`}
-            aria-pressed={selectedSkills.length === 0}
-            onClick={clearAll}
-            title="Afficher tous les projets"
-          >
-            Tous
-            <span className={styles.chipCount}>{projects.length}</span>
-          </button>
-
-          {chipsSelected.map(({ name, count }) => (
+          {availableSkills.map(skill => (
             <button
-              key={`sel-${name}`}
+              key={skill}
               type="button"
-              className={`${styles.chip} ${styles.chipActive}`}
-              aria-pressed={true}
-              onClick={() => toggleSkill(name)}
-              title={`Retirer ${name}`}
+              className={`${styles.chip} ${selectedSkills.includes(skill) ? styles.chipActive : ''}`}
+              onClick={() => toggleSkill(skill)}
             >
-              {name}
-              <span className={styles.chipCount}>{count}</span>
+              {skill}
             </button>
           ))}
+        </div>
 
-          {chipsAvailable.map(({ name, count }) => (
-            <button
-              key={`avail-${name}`}
-              type="button"
-              className={styles.chip}
-              aria-pressed={false}
-              onClick={() => toggleSkill(name)}
-              title={`Ajouter ${name}`}
-            >
-              {name}
-              <span className={styles.chipCount}>{count}</span>
-            </button>
-          ))}
+        {/* 🔹 Filtre éducation */}
+        <div className={styles.educationFilter}>
+          <select value={selectedEducation || ''} onChange={handleEducationChange}>
+            <option value="">Toutes les formations</option>
+            {allEducations.map(edu => (
+              <option key={edu} value={edu}>{edu}</option>
+            ))}
+          </select>
         </div>
       </div>
 
-      {loading ? (
-        <Loader />
-      ) : visibleProjects.length === 0 ? (
-        <p>Aucun projet trouvé.</p>
-      ) : (
+      {/* 🔹 Grille projets */}
+      {loading ? <Loader /> :
+        visibleProjects.length === 0 ? <p>Aucun projet trouvé.</p> :
         <div className={styles.grid}>
-          {visibleProjects.map((project) => renderCard(project))}
+          {visibleProjects.map(renderCard)}
         </div>
-      )}
+      }
     </section>
   );
 }

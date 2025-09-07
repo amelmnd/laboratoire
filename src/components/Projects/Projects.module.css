@@ -215,3 +215,44 @@
   color: var(--button-bg);
   transition: transform 0.08s ease, border-color 0.2s ease, background 0.2s ease;
 }
+
+.educationFilter select {
+  background-color: var(--card-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  appearance: none; /* supprime le style par défaut */
+  outline: none;
+}
+
+/* petit chevron custom */
+.educationFilter {
+  position: relative;
+  display: inline-block;
+}
+
+.educationFilter::after {
+  content: "▾";
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--link);
+  font-size: 0.8rem;
+}
+
+.educationFilter select:hover {
+  border-color: var(--link);
+  background-color: var(--background);
+}
+
+.educationFilter select:focus {
+  border-color: var(--link-hover);
+  box-shadow: 0 0 0 3px rgba(192, 108, 132, 0.3);
+}

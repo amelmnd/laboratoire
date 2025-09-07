@@ -3,3 +3,89 @@
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
 }
+/* Barre de filtrage */
+.filtersBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Bouton clear */
+.leftControls button {
+  background: var(--button-bg);
+  color: var(--button-text);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.leftControls button:hover {
+  background: var(--link-hover);
+  color: var(--background);
+}
+
+/* Chips compétences */
+.chipsScroller {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chip {
+  background: var(--card-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 2rem;
+  padding: 0.25rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+
+.chip:hover {
+  background: var(--button-bg);
+  color: var(--button-text);
+}
+
+.chipActive {
+  background: var(--link);
+  color: var(--background);
+  border-color: var(--link-hover);
+}
+
+/* Select éducation */
+.educationFilter select {
+  background: var(--card-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+
+.educationFilter select:hover,
+.educationFilter select:focus {
+  border-color: var(--link);
+  outline: none;
+  background: var(--button-bg);
+  color: var(--button-text);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .filtersBar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chipsScroller {
+    gap: 0.25rem;
+  }
+}
