@@ -8,10 +8,9 @@ export default function ProjectCard({
   title,
   description,
   imgSrc,
-  skills = [],
+  skills = [], 
   repourl,
   demourl,
-  education, // 🔹 ajouté
 }) {
   return (
     <div className={styles.card}>
@@ -19,26 +18,29 @@ export default function ProjectCard({
         {imgSrc ? (
           <img src={imgSrc} alt={title} className={styles.image} />
         ) : (
-          <div className={styles.imagePlaceholder}>Pas d’image</div>
+          <img
+            src="/img/imageNotFound.png"
+            alt="image non trouvé"
+            className={styles.image}
+          />
         )}
       </div>
 
       <div className={styles.content}>
-        <h3 className={styles.title}>{title}</h3>
+        <div className={styles.boxTitle}>
+          <h3 className={styles.title}>{title}</h3>
+        </div>
 
-        {/* 🔹 Formation affichée ici */}
-        {education && (
-          <p className={styles.education}>
-            <span className={styles.educationBadge}>{education}</span>
-          </p>
-        )}
+        <div className={styles.boxDescrit}>
+          <p className={styles.description}>{description}</p>
+        </div>
 
-        <p className={styles.description}>{description}</p>
-
-        <SkillTags skills={skills} />
+        <div className={styles.boxSkills}>
+          <SkillTags skills={skills} />
+        </div>
 
         {(repourl || demourl) && (
-          <div className={styles.links}>
+          <div className={styles.boxLink}>
             {repourl && (
               <Link
                 href={repourl}

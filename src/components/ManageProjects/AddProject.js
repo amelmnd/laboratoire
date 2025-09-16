@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import styles from './AddProject.module.css';
@@ -7,8 +5,10 @@ import SkillSelector from '../SkillSelector/SkillSelector';
 import SkillEditor from '../SkillSelector/SkillEditor';
 
 export default function AddProject({ onAdded, onBack }) {
+  const maxChars = 200; // Limite de caractères pour la description
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [charCount, setCharCount] = useState(0); // compteur de caractères
   const [imgFile, setImgFile] = useState(null);
   const [imgLink, setImgLink] = useState('');
   const [repourl, setRepourl] = useState('');
@@ -33,6 +33,16 @@ export default function AddProject({ onAdded, onBack }) {
     };
     fetchEducation();
   }, []);
+
+  const handleDescriptionChange = (e) => {
+    const value = e.target.value;
+    if (value.length <= maxChars) {
+      setDescription(value);
+      setCharCount(value.length);
+    } else {
+      alert(`Limite de ${maxChars} caractères atteinte !`);
+    }
+  };
 
   const uploadImage = async (file) => {
     if (!file) return '';
@@ -79,7 +89,7 @@ export default function AddProject({ onAdded, onBack }) {
           demourl,
           date,
           fav,
-          education_id: selectedEducation, // Ajouter la relation
+          education_id: selectedEducation,
         },
       ])
       .select()
@@ -123,8 +133,16 @@ export default function AddProject({ onAdded, onBack }) {
         <textarea
           className={styles.textarea}
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={handleDescriptionChange}
+          maxLength={maxChars}
         />
+        <div
+          className={`${styles.charCounter} ${
+            charCount >= maxChars ? styles.charLimitReached : ''
+          }`}
+        >
+          {charCount}/{maxChars} caractères
+        </div>
       </label>
 
       <label className={styles.label}>

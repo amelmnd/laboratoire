@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthProvider';
 import styles from './Dashboard.module.css';
 import Loader from '@/components/Loader/Loader';
@@ -9,19 +10,24 @@ import Loader from '@/components/Loader/Loader';
 export default function Dashboard() {
   const { user, signOut } = useAuth();
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     if (user !== undefined) {
       setLoading(false);
+      if (!user) {
+        // Redirection vers login si l'utilisateur n'est pas connecté
+        router.push('/login');
+      }
     }
-  }, [user]);
+  }, [user, router]);
 
   if (loading) {
     return <Loader />;
   }
 
   if (!user) {
-    return <p>Non connecté</p>;
+    return null; // on ne retourne rien, la redirection se fait déjà
   }
 
   return (
@@ -38,6 +44,12 @@ export default function Dashboard() {
       <nav className={styles.navLinks}>
         <Link href='/dashboard/projects' className={styles.navLink}>
           Projets
+        </Link>
+        <Link href='/dashboard/education' className={styles.navLink}>
+          Éducation
+        </Link>
+        <Link href='/dashboard/work' className={styles.navLink}>
+          Work
         </Link>
         <Link href='/dashboard/skills' className={styles.navLink}>
           Skills

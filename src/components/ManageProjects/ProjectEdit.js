@@ -18,6 +18,9 @@ export default function ProjectEdit({
   preview,
 }) {
   const [educations, setEducations] = useState([]);
+  const maxChars = 200; // Limite de caractères
+  const [charCount, setCharCount] = useState(project.description?.length || 0);
+
 
   useEffect(() => {
     const fetchEducation = async () => {
@@ -30,7 +33,18 @@ export default function ProjectEdit({
     };
     fetchEducation();
   }, []);
+  
+  const handleDescriptionChange = (e) => {
+    const value = e.target.value;
 
+    if (value.length <= maxChars) {
+      onChange(project.id, 'description', value);
+      setCharCount(value.length);
+    } else {
+      // Optionnel : alerte quand la limite est dépassée
+      alert(`Limite de ${maxChars} caractères atteinte !`);
+    }
+  };
   return (
     <div className={styles.card}>
       <label className={styles.label}>
@@ -48,9 +62,23 @@ export default function ProjectEdit({
         <textarea
           className={styles.textarea}
           value={project.description || ''}
-          onChange={(e) => onChange(project.id, 'description', e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (value.length <= 200) {
+              onChange(project.id, 'description', value);
+            }
+          }}
+          maxLength={200}
         />
+        <div
+          className={`${styles.charCounter} ${
+            (project.description?.length || 0) >= 200 ? styles.charLimitReached : ''
+          }`}
+        >
+          {(project.description?.length || 0)}/200 caractères
+        </div>
       </label>
+
 
       <label className={styles.label}>
         Éducation :

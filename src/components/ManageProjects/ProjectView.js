@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import styles from './ProjectView.module.css';
 
 export default function ProjectView({ project, skills, onEdit, onDelete, education }) {
@@ -8,9 +9,14 @@ export default function ProjectView({ project, skills, onEdit, onDelete, educati
       <h3>{project.title || <i>(Sans titre)</i>}</h3>
       <p>{project.description || <i>Pas de description</i>}</p>
 
-      {project.imglink && (
+      {project.imglink ? (
         <img src={project.imglink} className={styles.image} alt={project.title} />
-      )}
+      ) :                   
+          <img
+            src="/img/imageNotFound.png"
+            alt="image non trouvé"
+            className={styles.image}
+          />      }
 
       <div>
         <strong>Éducation :</strong>{' '}

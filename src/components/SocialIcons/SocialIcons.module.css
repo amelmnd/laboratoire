@@ -7,7 +7,6 @@
 
 .skillIcon {
   color: var(--text);
-  padding: 0.2rem;
 }
 
 .iconLink:hover .skillIcon {

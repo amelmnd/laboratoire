@@ -6,6 +6,7 @@ import styles from './Projects.module.css';
 import { supabase } from '../../lib/supabaseClient';
 import Loader from '@/components/Loader/Loader';
 import { useAuth } from '@/context/AuthProvider';
+import Link from 'next/link';
 
 export default function Projects() {
   const { user } = useAuth();
@@ -133,6 +134,11 @@ export default function Projects() {
         <h2 className={styles.title}>Bienvenue dans mon Laboratoire</h2>
         <p className={styles.subtitle}>
           Ici sont présentés tous mes projets, d'hier et d'aujourd'hui.
+          Si vous souhaitez en savoir plus sur moi mon&nbsp;            
+          <Link href={'https://amelmennad.netlify.app/'} className={styles.link} target="_blank">
+            portfolio
+          </Link>
+          .
         </p>
       </div>
 

@@ -113,3 +113,14 @@
 .cancelBtn:hover:not(:disabled) {
   background-color: #555;
 }
+.charCounter {
+  margin-top: 4px;
+  font-size: 0.9rem;
+  color: #555;
+  text-align: right;
+}
+
+.charLimitReached {
+  color: red;
+  font-weight: bold;
+}
